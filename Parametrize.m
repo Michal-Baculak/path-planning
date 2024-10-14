@@ -1,0 +1,101 @@
+% innerConePosition = innerBoundary;
+% outerConePosition = outerBoundary;
+chckpnts = parametrize(innerConePosition, outerConePosition, 500)
+plot(innerConePosition(:,1), innerConePosition(:,2), "g-");
+hold on;
+axis equal
+plot(outerConePosition(:,1), outerConePosition(:,2), "g-");
+for I = 1:size(chckpnts,1)
+    plot([chckpnts(I,1) chckpnts(I,3)], [chckpnts(I,2) chckpnts(I,4)], "r-");
+end
+
+
+function [checkpoints] = parametrize(innerCones, outterCones, resolution)
+    %1. Compute all distances between innerCones
+    %2. Compute total length
+    %3. Determine step size from resolution
+    %4. Move along innerCones with step size
+    %5. On each point construct a line perpendicular to local derivative, and
+    %   mark point, where it intersects outterCones
+    %6. Save the 2 points as line segment in checkpoints
+    %% 1. Compute all distances between innerCones
+    dist = [];
+    checkpoints = [];
+    for I = 1:(size(innerCones, 1)-1)
+        dx = innerCones(I,1) - innerCones(I+1,1);
+        dy = innerCones(I, 2) - innerCones(I+1,2);
+        dist (I) = sqrt(dx^2 + dy^2);
+    end
+    dx = innerCones(end, 1) - innerCones(1, 1);
+    dy = innerCones(end,2) - innerCones(end, 2);
+    dist(end+1) = sqrt(dx^2 + dy^2);
+
+    %% 2. compute total length
+    len = sum(dist);
+    %% 3. Determine step size from resolution
+    ds = len/resolution;
+    %% 4. Move along innerCones with step size
+    for I = 1:resolution
+        s = I*ds
+        %find out, between which points we lie 
+        pos = 1;
+        while(s > 0)
+            s = s - dist(pos);
+            pos = pos + 1;
+        end
+        pos = pos - 1;
+        %pos = index of last point
+        s = s + dist(pos); %undo last subtraction to find remaining dist
+        k = innerCones(mod(pos, size(innerCones,1)) + 1, :) - innerCones(pos, :);
+        % point along innerCones
+        p1 = innerCones(pos, :) + k*s/dist(pos) 
+    %% 5. On each point construct a line perpendicular to local derivative, and
+    %   mark point, where it intersects outterCones
+        k_n = [-k(2), k(1)]; % perpendicular vector to the left
+        p_s = [] %intersection points, will check for the closest one
+        for J = 1: (size(outterCones,1)-1)
+            [out p] = crossesBetween(outterCones(J,:), outterCones(J+1,:), p1, k_n);
+            if(out)
+                p_s = [p_s; p];
+            end
+        end
+        [out p] = crossesBetween(outterCones(end,:), outterCones(1,:), p1, k_n);
+        if(out)
+            p_s = [p_s; p];
+        end
+        p2 = p_s(1,:);
+        min_dist = distance(p1, p2);
+        for J = 1: size(p_s,1)
+            dst = distance(p1, p_s(J,:));
+            if(dst < min_dist)
+                min_dist = dst;
+                p2 = p_s(J,:);
+            end
+        end
+        %% 6. Save the 2 points as line segment in checkpoints
+        checkpoints = [checkpoints; p1(1), p1(2), p2(1),p2(2)];
+    end
+end
+
+function [out, p] = crossesBetween(A,B, origin, direction)
+    D = origin + direction;
+    x1 = A(1);          y1 = A(2);    
+    x2 = B(1);          y2 = B(2);    
+    x3 = origin(1);     y3 = origin(2);
+    x4 = D(1);          y4 = D(2);
+    
+    t = ((x1-x3)*(y3-y4) - (y1-y3)*(x3-x4))/...
+        ((x1-x2)*(y3-y4) - (y1-y2)*(x3-x4));
+    if(t >= 0 && t <= 1)
+        out = 1;
+        p = [x1+t*(x2-x1), y1 + t*(y2-y1)];
+    else
+        out = 0;
+        p = -1;
+    end
+
+end
+function d = distance(A, B)
+    d = sqrt((A(1) - B(1))^2 + (A(2) - B(2))^2);
+end
+
