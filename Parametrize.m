@@ -71,7 +71,20 @@ function [checkpoints] = parametrize(innerCones, outterCones, resolution)
                 min_dist = dst;
                 p2 = p_s(J,:);
             end
+        end       
+
+        %Check for crossing with previous lines
+        if(size(checkpoints,1) > 1)
+            prev_A = [checkpoints(end,1) checkpoints(end,2)]
+            prev_B = [checkpoints(end,3) checkpoints(end,4)]
+            [check ~] = crossesBetween(prev_A, prev_B, p1, p2-p1);
+            
+            if(check)
+                %line crosses previous line, do not add to checkpoints
+                continue;
+            end
         end
+        
         %% 6. Save the 2 points as line segment in checkpoints
         checkpoints = [checkpoints; p1(1), p1(2), p2(1),p2(2)];
     end
@@ -95,6 +108,7 @@ function [out, p] = crossesBetween(A,B, origin, direction)
     end
 
 end
+
 function d = distance(A, B)
     d = sqrt((A(1) - B(1))^2 + (A(2) - B(2))^2);
 end
