@@ -1,6 +1,7 @@
 % innerConePosition = innerBoundary;
 % outerConePosition = outerBoundary;
-chckpnts = parametrize(innerConePosition, outerConePosition, 500)
+chckpnts = parametrize(innerConePosition, outerConePosition, 200)
+%% Track and chcecpoints plotting
 plot(innerConePosition(:,1), innerConePosition(:,2), "g-");
 hold on;
 axis equal
@@ -9,6 +10,13 @@ for I = 1:size(chckpnts,1)
     plot([chckpnts(I,1) chckpnts(I,3)], [chckpnts(I,2) chckpnts(I,4)], "r-");
 end
 
+%% Paths demo
+% path1 = get_points(chckpnts, ones(size(chckpnts,1),1)./2);
+% plot(path1(:,1), path1(:,2), "k-");
+% path2 = get_points(chckpnts, zeros(size(chckpnts,1),1));
+% plot(path2(:,1), path2(:,2), "k-");
+% path3 = get_points(chckpnts, (sin(1:size(chckpnts,1)) + ones(1,size(chckpnts,1)))./2)
+% plot(path3(:,1), path3(:,2), "k-");
 
 function [checkpoints] = parametrize(innerCones, outterCones, resolution)
     %1. Compute all distances between innerCones
@@ -90,26 +98,6 @@ function [checkpoints] = parametrize(innerCones, outterCones, resolution)
     end
 end
 
-function [out, p] = crossesBetween(A,B, origin, direction)
-    D = origin + direction;
-    x1 = A(1);          y1 = A(2);    
-    x2 = B(1);          y2 = B(2);    
-    x3 = origin(1);     y3 = origin(2);
-    x4 = D(1);          y4 = D(2);
-    
-    t = ((x1-x3)*(y3-y4) - (y1-y3)*(x3-x4))/...
-        ((x1-x2)*(y3-y4) - (y1-y2)*(x3-x4));
-    if(t >= 0 && t <= 1)
-        out = 1;
-        p = [x1+t*(x2-x1), y1 + t*(y2-y1)];
-    else
-        out = 0;
-        p = -1;
-    end
 
-end
 
-function d = distance(A, B)
-    d = sqrt((A(1) - B(1))^2 + (A(2) - B(2))^2);
-end
 
