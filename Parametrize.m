@@ -1,24 +1,4 @@
-% innerConePosition = innerBoundary;
-% outerConePosition = outerBoundary;
-chckpnts = parametrize(innerConePosition, outerConePosition, 200)
-%% Track and chcecpoints plotting
-plot(innerConePosition(:,1), innerConePosition(:,2), "g-");
-hold on;
-axis equal
-plot(outerConePosition(:,1), outerConePosition(:,2), "g-");
-for I = 1:size(chckpnts,1)
-    plot([chckpnts(I,1) chckpnts(I,3)], [chckpnts(I,2) chckpnts(I,4)], "r-");
-end
-
-%% Paths demo
-% path1 = get_points(chckpnts, ones(size(chckpnts,1),1)./2);
-% plot(path1(:,1), path1(:,2), "k-");
-% path2 = get_points(chckpnts, zeros(size(chckpnts,1),1));
-% plot(path2(:,1), path2(:,2), "k-");
-% path3 = get_points(chckpnts, (sin(1:size(chckpnts,1)) + ones(1,size(chckpnts,1)))./2)
-% plot(path3(:,1), path3(:,2), "k-");
-
-function [checkpoints] = parametrize(innerCones, outterCones, resolution)
+function [checkpoints] = Parametrize(innerCones, outterCones, resolution)
     %1. Compute all distances between innerCones
     %2. Compute total length
     %3. Determine step size from resolution
