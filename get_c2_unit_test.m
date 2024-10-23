@@ -1,0 +1,9 @@
+%2 by 2 square
+chckpnts = [1, 1, -1, -1; ...
+            1, 1, -1, 3; ...
+            1, 1, 3, 3; ...
+            1, 1, 3, -1];
+alphas = [0.5;0.5;0.5;0.5];
+pts = get_points(chckpnts, alphas)
+%total curvature^2 = 4*(pi/2/2)^2 = 2.4674
+res = get_curvature2(chckpnts, alphas)

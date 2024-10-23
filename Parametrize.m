@@ -39,7 +39,7 @@ function [checkpoints] = Parametrize(innerCones, outterCones, resolution)
         p1 = innerCones(pos, :) + k*s/dist(pos) 
     %% 5. On each point construct a line perpendicular to local derivative, and
     %   mark point, where it intersects outterCones
-        k_n = [-k(2), k(1)]; % perpendicular vector to the left
+        k_n = [-k(2), k(1)]; % perpendicular vector to the left (right or left doesnt matter)
         p_s = [] %intersection points, will check for the closest one
         for J = 1: (size(outterCones,1)-1)
             [out p] = crossesBetween(outterCones(J,:), outterCones(J+1,:), p1, k_n);
