@@ -2,13 +2,9 @@
 load("track1_fixed.mat");
 chckpnts = Parametrize(innerConePosition, outerConePosition, 100)
 %% plot bounds and checkpoints
-plot(innerConePosition(:,1), innerConePosition(:,2), "g-");
-hold on;
-axis equal
-plot(outerConePosition(:,1), outerConePosition(:,2), "g-");
-for I = 1:size(chckpnts,1)
-    plot([chckpnts(I,1) chckpnts(I,3)], [chckpnts(I,2) chckpnts(I,4)], "r-");
-end
+figure;
+plot_track(innerConePosition, outerConePosition);
+plot_base(chckpnts);
 
 %% algorithm setup
 x0 = zeros(size(chckpnts, 1),1);
@@ -19,16 +15,13 @@ options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', 
 
 %% optimize based od length
 sol = fmincon(@(alphas) get_length(chckpnts,alphas),x0, [], [], [], [], lb, ub, [], options)
-pts = get_points(chckpnts, sol);
-plot(pts(:,1), pts(:,2), "go");
+plot_trajectory(chckpnts, sol);
 %% optimize based on length^2
 sol2 = fmincon(@(alphas) get_length2(chckpnts,alphas),x0, [], [], [], [], lb, ub, [], options)
-pts2 = get_points(chckpnts, sol2);
-plot(pts2(:,1), pts2(:,2), "bo");
+plot_trajectory(chckpnts, sol2);
 %% optimize based on curvature^2
 sol3 = fmincon(@(alphas) get_curvature2(chckpnts,alphas),x0, [], [], [], [], lb, ub, [], options)
-pts3 = get_points(chckpnts, sol3);
-plot(pts3(:,1), pts3(:,2), "ko");
+plot_trajectory(chckpnts, sol3);
 
 
 
