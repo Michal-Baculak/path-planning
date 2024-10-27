@@ -1,5 +1,5 @@
 function plot_trajectory(base, alphas)
-    pts = get_points(base, alfas);
+    pts = get_points(base, alphas);
     hold on;
-    plot(pts(:,1), pts(:,2), "ko-");
+    plot(pts(:,1), pts(:,2), "kx-");
 end
