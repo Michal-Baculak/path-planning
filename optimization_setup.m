@@ -4,6 +4,7 @@ chckpnts = Parametrize(innerConePosition, outerConePosition, 100)
 %% plot bounds and checkpoints
 figure;
 plot_track(innerConePosition, outerConePosition);
+hold on
 plot_base(chckpnts);
 
 %% algorithm setup
