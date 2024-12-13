@@ -1,4 +1,12 @@
+%output contains:
+%   out.v;          - velocity profile
+%   out.a_lat;      - lateral acceleration profile
+%   out.a_long;     - longtitudal acceleration profile
+%   out.t_tot;      - total lap time
+%   out.t           - time profile (time for each segment)
+
 function v = get_velocity_profile(base, alphas, vehicle)
+
     k = get_curvature_profile(base, alphas);
     ds = get_length_profile(base, alphas);
     v_k_based = sqrt(vehicle.a_max_lat./abs(k));
@@ -52,23 +60,11 @@ function v = get_velocity_profile(base, alphas, vehicle)
         if(v(I-1) < v(I))
             continue; %no breaking necessary 
         end
-        a = v(I)^2;
-        b = k(I-1)^2
-        c = vehicle.a_max_lat
-        d = vehicle.a_max_front;
-        e = ds(I-1);
-        v_avail = sqrt(c*(a*c+2*e*d*sqrt(4*e^2*b^2*d^2-a^2*b^2+c^2 ))/(c^2+4*e^2*b^2*d^2));
+        Cx = 1/(2*ds(I-1)*vehicle.a_max_brake);
+        Cy = k(I-1)/vehicle.a_max_lat;
+        v_avail = sqrt( (2*Cx^2*v(I)^2+sqrt(4*Cx^4*v(I)^4-4*(Cx^2+Cy^2)*(Cx^2*v(I)^4-1))) / (2*(Cx^2+Cy^2)) );
         v(I-1) = min(v_avail, v(I-1));
     end
-    v_struct.v_backwards_shift = v;
-    figure();
-    A = v_struct.v_lat_shift; 
-    B = v_struct.v_forward_shift;
-    C = v_struct.v_backwards_shift;
-    scatter(1:length(A),A, "r");
-    hold on;
-    scatter(1:length(B),B, "g");
-    scatter(1:length(C),C, "b");
 
     % unshift !!!!
     v = v(1:end-1); % remove the last element
@@ -77,19 +73,7 @@ function v = get_velocity_profile(base, alphas, vehicle)
     len = length(v_model_based); 
     v_unshift = [v(len - i_V_min + 2:end), v(1:len - i_V_min + 1)];
     v = v_unshift; % value to be returned
-    
-    
-    figure();
-    scatter(1:length(v_struct.v_lat), v_struct.v_lat, "g");
-    hold on;
-    scatter(1:length(v), v, "b");
-    % figure();
-    % subplot(3,1,1);
-    % scatter(1:100, get_curvature_profile(base, alphas));
-    % subplot(3,1,2);
-    % scatter(1:100, 1./(get_curvature_profile(base, alphas)))
-    % subplot(3,1,3);
-    % scatter(1:100, v);
+
 end
 
 function a = get_max_acc_long(vehicle, velocity)
