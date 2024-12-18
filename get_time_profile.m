@@ -1,4 +1,5 @@
-function t = get_time_profile(base, alphas, v_prof)
+function t = get_time_profile(base, alphas, vehicle)
+    v_prof = get_velocity_profile(base, alphas, vehicle);
     pts = get_points(base, alphas);
     ds = get_length_profile(base, alphas);
     % s = v*t, t = s/v
