@@ -6,6 +6,10 @@ function simulate_profile(vel_profile, innerCones, outterCones, base, alphas,t_s
     x_ell = vehicle.a_max_lat*cos(t)
     y_ell = vehicle.a_max_brake*sin(t);
     plot(x_ell, y_ell, "k");
+    title("Tire dynamic model");
+    xlabel("Lateral Acceleration (m/s^2)");
+    ylabel("Longtitudal Acceleration (m/s^2)");
+    legend("Dynamic limit");
     hold on;
     h_tire = plot(nan, nan, 'bo', 'MarkerSize', 10); % Initialize point
     axis equal;
