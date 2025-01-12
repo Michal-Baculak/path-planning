@@ -30,6 +30,10 @@ function [checkpoints] = Parametrize(innerCones, outterCones, resolution)
         while(s > 0)
             s = s - dist(pos);
             pos = pos + 1;
+            if(pos > length(dist)) % residual `s` cause by rounding errors 
+                s = 0;
+                break;
+            end
         end
         pos = pos - 1;
         %pos = index of last point
