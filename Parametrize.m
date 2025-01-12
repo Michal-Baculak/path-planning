@@ -15,7 +15,7 @@ function [checkpoints] = Parametrize(innerCones, outterCones, resolution)
         dist (I) = sqrt(dx^2 + dy^2);
     end
     dx = innerCones(end, 1) - innerCones(1, 1);
-    dy = innerCones(end,2) - innerCones(end, 2);
+    dy = innerCones(end,2) - innerCones(1, 2);
     dist(end+1) = sqrt(dx^2 + dy^2);
 
     %% 2. compute total length
@@ -28,12 +28,12 @@ function [checkpoints] = Parametrize(innerCones, outterCones, resolution)
         %find out, between which points we lie 
         pos = 1;
         while(s > 0)
-            s = s - dist(pos);
-            pos = pos + 1;
             if(pos > length(dist)) % residual `s` cause by rounding errors 
                 s = 0;
                 break;
             end
+            s = s - dist(pos);
+            pos = pos + 1;
         end
         pos = pos - 1;
         %pos = index of last point
