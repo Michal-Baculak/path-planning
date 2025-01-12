@@ -26,8 +26,6 @@ function [x, y] = square_round(a, b, r, ds)
     t1 = -pi:radial_spacing:-pi/2;
     x_c1 = cos(t1)*r + r;
     y_c1 = sin(t1)*r + r;
-    hold on;
-    axis equal
 
     x_l1 = r:ds:a-r;
     y_l1 = zeros(size(x_l1));
