@@ -77,5 +77,5 @@ function v = get_velocity_profile(base, alphas, vehicle)
 end
 
 function a = get_max_acc_long(vehicle, velocity)
-    a = vehicle.a_max_front;
+    a = vehicle.a_max_front; % TODO
 end

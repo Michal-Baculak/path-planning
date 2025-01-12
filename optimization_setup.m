@@ -1,6 +1,7 @@
 %% load and parametrize track
 load("vehicle_F1.mat");
-load("track1_fixed.mat");
+% load("track1_fixed.mat");
+[innerConePosition, outerConePosition] = square_round_track(100, 50, 4, 4, 2);
 chckpnts = Parametrize(innerConePosition, outerConePosition, 100)
 %% plot bounds and checkpoints
 figure;
@@ -45,6 +46,24 @@ lb = zeros(size(chckpnts, 1),1);
 ub = ones(size(chckpnts, 1),1);
 x0 = ones(size(chckpnts, 1),1);
 options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', "MaxFunctionEvaluations",20e3, "StepTolerance",1e-10);
-sol5 = fmincon(@(alphas) get_cost_weighted(chckpnts,alphas, 0),x0, [], [], [], [], lb, ub, [], options)
+sol5 = fmincon(@(alphas) get_cost_weighted(chckpnts,alphas, 0.5),x0, [], [], [], [], lb, ub, [], options)
 plot_trajectory(chckpnts, sol5);
 lap_time = sum(get_time_profile(chckpnts, sol5, vehicle))
+
+%% optimize based on curvature^1/2
+lb = zeros(size(chckpnts, 1),1);
+ub = ones(size(chckpnts, 1),1);
+x0 = ones(size(chckpnts, 1),1);
+options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', "MaxFunctionEvaluations",20e3, "StepTolerance",1e-10);
+sol6 = fmincon(@(alphas) sum(sqrt(abs(get_curvature_profile(chckpnts,alphas)))),x0, [], [], [], [], lb, ub, [], options)
+plot_trajectory(chckpnts, sol6);
+lap_time = sum(get_time_profile(chckpnts, sol6, vehicle))
+
+%% optimize based on |curvature|
+lb = zeros(size(chckpnts, 1),1);
+ub = ones(size(chckpnts, 1),1);
+x0 = ones(size(chckpnts, 1),1);
+options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', "MaxFunctionEvaluations",40e3, "StepTolerance",1e-10);
+sol7 = fmincon(@(alphas) sum(abs(get_curvature_profile(chckpnts,alphas))),x0, [], [], [], [], lb, ub, [], options)
+plot_trajectory(chckpnts, sol7);
+lap_time = sum(get_time_profile(chckpnts, sol7, vehicle))
