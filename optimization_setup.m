@@ -1,7 +1,7 @@
 %% load and parametrize track
 load("vehicle_F1.mat");
-% load("track1_fixed.mat");
-[innerConePosition, outerConePosition] = square_round_track(100, 50, 4, 4, 2);
+load("track1_fixed.mat");
+% [innerConePosition, outerConePosition] = square_round_track(100, 50, 4, 4, 2);
 chckpnts = Parametrize(innerConePosition, outerConePosition, 100)
 %% plot bounds and checkpoints
 figure;
@@ -14,7 +14,7 @@ lb = zeros(size(chckpnts, 1),1);
 ub = ones(size(chckpnts, 1),1);
 x0 = ones(size(chckpnts, 1),1);
 options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', "MaxFunctionEvaluations",10e3, "StepTolerance",1e-20);
-sol = fmincon(@(alphas) get_length(chckpnts,alphas),x0, [], [], [], [], lb, ub, [], options)
+sol = fmincon(@(alphas) get_length(chckpnts,alphas),x0, [], [], [], [], lb, ub, [], options);
 plot_trajectory(chckpnts, sol);
 %% optimize based on length^2
 lb = zeros(size(chckpnts, 1),1);
@@ -67,3 +67,17 @@ options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', 
 sol7 = fmincon(@(alphas) sum(abs(get_curvature_profile(chckpnts,alphas))),x0, [], [], [], [], lb, ub, [], options)
 plot_trajectory(chckpnts, sol7);
 lap_time = sum(get_time_profile(chckpnts, sol7, vehicle))
+
+
+%% optimize based od length with gradient
+lb = zeros(size(chckpnts, 1),1);
+ub = ones(size(chckpnts, 1),1);
+x0 = ones(size(chckpnts, 1),1);
+options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', "MaxFunctionEvaluations",10e3, "StepTolerance",1e-20, "SpecifyObjectiveGradient",true);
+sol8 = fmincon(@(alphas) func_l(chckpnts, alphas),x0, [], [], [], [], lb, ub, [], options)
+plot_trajectory(chckpnts, sol8);
+
+function [f, g] = func_l(base, alphas)
+    f = get_length(base, alphas);
+    g = grad_length(base, alphas);
+end
