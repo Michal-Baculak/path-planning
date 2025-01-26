@@ -7,10 +7,25 @@
 
 function v = get_velocity_profile(base, alphas, vehicle)
 
+    %evaluate profiles
     k = get_curvature_profile(base, alphas);
     ds = get_length_profile(base, alphas);
+
+    %max speed in corners
     v_k_based = sqrt(vehicle.a_max_lat./abs(k));
+
+    %max speed of vehicle
     v_model_based = min(vehicle.v_max, v_k_based);
+
+    %max speed of steering
+    v_steering = zeros(size(v_k_based));
+    k_closed = [k, k(1)];
+    for i = 1:length(ds)
+        dk = abs(k_closed(i+1) - k_closed(i));
+        v_steering(i) = vehicle.c_steering*ds(i)/dk;
+    end 
+    v_model_based = min(v_model_based, v_steering);
+
     v_struct.k_based = v_k_based;
     v_struct.model_based = v_model_based;
 
