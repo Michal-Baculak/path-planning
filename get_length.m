@@ -1,5 +1,5 @@
-function l = get_length(chckpnts, alphas)
-    pnts = get_points(chckpnts, alphas);
+function l = get_length(base, alphas)
+    pnts = get_points(base, alphas);
     % loop the track for easier processing - add the first element to the
     % last position
     sz = size(pnts,1);

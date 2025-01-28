@@ -1,14 +1,14 @@
-function [checkpoints] = Parametrize(innerCones, outterCones, resolution)
+function [base] = Parametrize(innerCones, outterCones, resolution)
     %1. Compute all distances between innerCones
     %2. Compute total length
     %3. Determine step size from resolution
     %4. Move along innerCones with step size
     %5. On each point construct a line perpendicular to local derivative, and
     %   mark point, where it intersects outterCones
-    %6. Save the 2 points as line segment in checkpoints
+    %6. Save the 2 points as line segment in base
     %% 1. Compute all distances between innerCones
     dist = [];
-    checkpoints = [];
+    base = [];
     for I = 1:(size(innerCones, 1)-1)
         dx = innerCones(I,1) - innerCones(I+1,1);
         dy = innerCones(I, 2) - innerCones(I+1,2);
@@ -66,19 +66,19 @@ function [checkpoints] = Parametrize(innerCones, outterCones, resolution)
         end       
 
         %Check for crossing with previous lines
-        if(size(checkpoints,1) > 1)
-            prev_A = [checkpoints(end,1) checkpoints(end,2)]
-            prev_B = [checkpoints(end,3) checkpoints(end,4)]
+        if(size(base,1) > 1)
+            prev_A = [base(end,1) base(end,2)]
+            prev_B = [base(end,3) base(end,4)]
             [check ~] = crossesBetween(prev_A, prev_B, p1, p2-p1);
             
             if(check)
-                %line crosses previous line, do not add to checkpoints
+                %line crosses previous line, do not add to base
                 continue;
             end
         end
         
-        %% 6. Save the 2 points as line segment in checkpoints
-        checkpoints = [checkpoints; p1(1), p1(2), p2(1),p2(2)];
+        %% 6. Save the 2 points as line segment in base
+        base = [base; p1(1), p1(2), p2(1),p2(2)];
     end
 end
 

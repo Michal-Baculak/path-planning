@@ -1,5 +1,5 @@
-function s = get_length2(chckpnts, alphas)
-    pts = get_points(chckpnts, alphas);
+function s = get_length2(base, alphas)
+    pts = get_points(base, alphas);
     sz = size(pts, 1);
     pts = [pts; pts(1,:)];
     s = 0;

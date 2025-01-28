@@ -1,5 +1,5 @@
-function k = get_curvature2(chckpnts, alphas)
-    pts = get_points(chckpnts, alphas);
+function k = get_curvature2(base, alphas)
+    pts = get_points(base, alphas);
     sz = size(pts,1);
     pts = [pts(end,:); pts; pts(1,:)];
     k = 0;
