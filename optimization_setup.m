@@ -2,7 +2,8 @@
 load("vehicle_FS.mat");
 load("track1_fixed.mat");
 % [innerConePosition, outerConePosition] = square_round_track(100, 50, 4, 4, 2);
-base = Parametrize(innerConePosition, outerConePosition, 100)
+base = Parametrize(innerConePosition, outerConePosition, 200)
+% base = parametrize_delaunay(innerConePosition,outerConePosition);
 %% plot bounds and checkpoints
 figure;
 plot_track(innerConePosition, outerConePosition);
@@ -88,6 +89,14 @@ sol9 = fmincon(@(alphas) func_k(base, alphas),x0, [], [], [], [], lb, ub, [], op
 plot_trajectory(base, sol9);
 lap_time = sum(get_time_profile(base, sol9, vehicle))
 
+%% optimize based od k^2 and length weighted with gradient
+lb = zeros(size(base, 1),1);
+ub = ones(size(base, 1),1);
+x0 = ones(size(base, 1),1);
+options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', "MaxFunctionEvaluations",10e3, "StepTolerance",1e-20, "SpecifyObjectiveGradient",true);
+sol10 = fmincon(@(alphas) func_w(base, alphas,1),x0, [], [], [], [], lb, ub, [], options)
+plot_trajectory(base, sol10);
+lap_time = sum(get_time_profile(base, sol10, vehicle))
 
 function [f, g] = func_l(base, alphas)
     f = get_length(base, alphas);
@@ -97,4 +106,8 @@ end
 function [f, g] = func_k(base, alphas)
     f = get_curvature2(base, alphas);
     g = grad_k2(base, alphas);
+end
+function [f, g] = func_w(base, alphas, w)
+    f = get_cost_weighted(base, alphas, w);
+    g = grad_w(base, alphas, w);
 end
