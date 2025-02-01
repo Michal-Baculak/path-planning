@@ -2,8 +2,8 @@
 load("vehicle_FS.mat");
 load("track1_fixed.mat");
 % [innerConePosition, outerConePosition] = square_round_track(100, 50, 4, 4, 2);
-base = Parametrize(innerConePosition, outerConePosition, 200)
-% base = parametrize_delaunay(innerConePosition,outerConePosition);
+% base = Parametrize(innerConePosition, outerConePosition, 200)
+base = parametrize_delaunay(innerConePosition,outerConePosition);
 %% plot bounds and checkpoints
 figure;
 plot_track(innerConePosition, outerConePosition);
