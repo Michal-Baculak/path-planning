@@ -18,14 +18,14 @@ function v = get_velocity_profile(base, alphas, vehicle)
     v_speed_limit = min(vehicle.v_max, v_k_based);
 
     %max speed of steering
-    % v_steering = zeros(size(v_k_based));
-    % k_closed = [k, k(1)];
-    % for i = 1:length(ds)
-    %     dk = abs(k_closed(i+1) - k_closed(i));
-    %     v_steering(i) = vehicle.c_steering*ds(i)/dk;
-    % end 
-    % 
-    % v_speed_limit = min(v_speed_limit, v_steering);
+    v_steering = zeros(size(v_k_based));
+    k_closed = [k, k(1)];
+    for i = 1:length(ds)
+        dk = abs(k_closed(i+1) - k_closed(i));
+        v_steering(i) = vehicle.c_steering*ds(i)/dk;
+    end 
+
+    v_speed_limit = min(v_speed_limit, v_steering);
 
     v_struct.k_based = v_k_based;
     % v_struct.steering_based = v_steering;
@@ -114,5 +114,5 @@ function a = get_max_acc_long(vehicle, velocity)
 
     % Elaborate version: acceleration depends upon actual velocity
     % P = F*v = m*a*v; a = P/(m*v)
-    a = vehicle.max_power/(velocity*vehicle.mass)
+    a = vehicle.max_power/(velocity*vehicle.mass);
 end

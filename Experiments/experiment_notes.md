@@ -31,11 +31,11 @@ Next, we aim to compare the results of combined optimization using `weight` valu
   - Original cost function: `9.4968`
   - New cost function: `9.5168`
 
-### Combined k<sup>2</sup> and Length Optimization (\(w = 0.5\)):
+### Combined k<sup>2</sup> and Length Optimization (w = 0.5):
 - **Lap time:** `9.0416`
 - **Total length:** `368.0217`
 - **Total k<sup>2</sup>:** `0.1788`
-
+---
 1. The curvature and length optimizations are both very similar to the established method, visually and quantitatively.  
 2. Combining the two metrics provides better optimization than either method alone.
 

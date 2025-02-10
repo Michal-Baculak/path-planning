@@ -2,8 +2,8 @@
 load("vehicle_FS.mat");
 load("track1_fixed.mat");
 % [innerConePosition, outerConePosition] = square_round_track(100, 50, 4, 4, 2);
-% base = Parametrize(innerConePosition, outerConePosition, 200)
-base = parametrize_delaunay(innerConePosition,outerConePosition);
+base = Parametrize(innerConePosition, outerConePosition, 100);
+%base = parametrize_delaunay(innerConePosition,outerConePosition);
 %% plot bounds and checkpoints
 figure;
 plot_track(innerConePosition, outerConePosition);
@@ -94,9 +94,22 @@ lb = zeros(size(base, 1),1);
 ub = ones(size(base, 1),1);
 x0 = ones(size(base, 1),1);
 options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', "MaxFunctionEvaluations",10e3, "StepTolerance",1e-20, "SpecifyObjectiveGradient",true);
-sol10 = fmincon(@(alphas) func_w(base, alphas,1),x0, [], [], [], [], lb, ub, [], options)
+sol10 = fmincon(@(alphas) func_w(base, alphas,0.5),x0, [], [], [], [], lb, ub, [], options)
 plot_trajectory(base, sol10);
 lap_time = sum(get_time_profile(base, sol10, vehicle))
+
+%% optimize first half based od k^2 and length weighted with gradient
+% In progress
+lb = zeros(size(base, 1),1);
+ub = ones(size(base, 1),1);
+x_opt = ones(floor(size(base, 1)/2),1);
+x_pers = ones((size(base,1) - size(x_opt,1)) ,1);
+
+options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', "MaxFunctionEvaluations",10e3, "StepTolerance",1e-20, "SpecifyObjectiveGradient",true);
+sol11 = fmincon(@(alphas) func_w(base, [alphas; x_pers],1),x_opt, [], [], [], [], lb, ub, [], options)
+sol11 = [sol11; x_pers];
+plot_trajectory(base, sol11);
+lap_time = sum(get_time_profile(base, sol11, vehicle))
 
 function [f, g] = func_l(base, alphas)
     f = get_length(base, alphas);
@@ -108,6 +121,10 @@ function [f, g] = func_k(base, alphas)
     g = grad_k2(base, alphas);
 end
 function [f, g] = func_w(base, alphas, w)
+    f = get_cost_weighted(base, alphas, w);
+    g = grad_w(base, alphas, w);
+end
+function [f, g] = func_w_partial(base, alphas, w, breakpoint)
     f = get_cost_weighted(base, alphas, w);
     g = grad_w(base, alphas, w);
 end
