@@ -1,6 +1,16 @@
 function g = grad_length(base, alphas)
     % calculates the gradient of total length with respect to alphas
     % gradient = vector of partial derivatives (d{s}/d{alpha})
+    if(base(1,:) == base(end,:))
+        g = grad_length_closed(base(1:end-1,:),alphas);
+        return;
+    end
+    disp('Unsupported!');
+    g = NaN;
+end
+function g = grad_length_closed(base, alphas)
+    % calculates the gradient of total length with respect to alphas
+    % gradient = vector of partial derivatives (d{s}/d{alpha})
     pts = get_points(base, alphas);
 
     % connect the track

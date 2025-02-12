@@ -12,8 +12,12 @@ l = get_length(base, alphas);
 % transform both parameters to the same base (length is orders of magnitude
 % larger than curvature of a track
 % idea: normalize by comparing to the midpoint track
-k_midpoint = get_curvature2(base, ones(size(base))*0.5);
-l_midpoint = get_length(base, ones(size(base))*0.5);
+sz = size(base,1);
+if(base(1,:) == base(end,:))
+    sz = sz-1;
+end
+k_midpoint = get_curvature2(base, ones(sz,1)*0.5);
+l_midpoint = get_length(base, ones(sz,1)*0.5);
 
 k_norm = k/k_midpoint;
 l_norm = l/l_midpoint;

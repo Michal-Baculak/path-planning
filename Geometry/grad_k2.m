@@ -1,7 +1,15 @@
 function out = grad_k2(base, alphas)
+    if(base(1,:) == base(end,:))
+        out = grad_k2_closed(base(1:end-1,:),alphas);
+        return;
+    end
+    disp("UNSUPPORTED!");
+    out = NaN;
+end
+function out = grad_k2_closed(base, alphas)
     out = ones(size(alphas));
     pts = get_points(base, alphas);
-    angles = get_angle_profile(base, alphas);
+    angles = get_angle_profile([base; base(1,:)], alphas);
     angles = [angles(end);angles;angles(1)];
     base = [base(end,:); base; base(1,:); base(2,:)];
     pts = [pts(end,:); pts; pts(1,:); pts(2,:)];

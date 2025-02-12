@@ -67,8 +67,8 @@ function [base] = Parametrize(innerCones, outterCones, resolution)
 
         %Check for crossing with previous lines
         if(size(base,1) > 1)
-            prev_A = [base(end,1) base(end,2)]
-            prev_B = [base(end,3) base(end,4)]
+            prev_A = [base(end,1) base(end,2)];
+            prev_B = [base(end,3) base(end,4)];
             [check ~] = crossesBetween(prev_A, prev_B, p1, p2-p1);
             
             if(check)
