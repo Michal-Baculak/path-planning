@@ -19,7 +19,7 @@ function v = get_velocity_profile(base, alphas, vehicle)
 
     %max speed of steering
     v_steering = zeros(size(v_k_based));
-    k_closed = [k, k(1)];
+    k_closed = [k; k(1)];
     for i = 1:length(ds)
         dk = abs(k_closed(i+1) - k_closed(i));
         v_steering(i) = vehicle.c_steering*ds(i)/dk;
@@ -43,9 +43,9 @@ function v = get_velocity_profile(base, alphas, vehicle)
     v_struct.v_lat = v_speed_limit;
 
     % shift the track so that it starts at the point of minimal velocity
-    v_speed_limit = [v_speed_limit(i_V_min:end), v_speed_limit(1:i_V_min-1)];
-    k = [k(i_V_min:end), k(1:i_V_min-1)];
-    ds = [ds(i_V_min:end), ds(1:i_V_min-1)];
+    v_speed_limit = [v_speed_limit(i_V_min:end); v_speed_limit(1:i_V_min-1)];
+    k = [k(i_V_min:end); k(1:i_V_min-1)];
+    ds = [ds(i_V_min:end); ds(1:i_V_min-1)];
     v = v_speed_limit;
     
     % forward pass
@@ -64,7 +64,7 @@ function v = get_velocity_profile(base, alphas, vehicle)
 
     %save unshifted
     len = length(v_speed_limit); 
-    v_struct.v_forward = [v(len - i_V_min + 2:end), v(1:len - i_V_min + 1)];
+    v_struct.v_forward = [v(len - i_V_min + 2:end); v(1:len - i_V_min + 1)];
     
     % **backwards pass**
     % we need to take into account that racing track is closed loop, and so
@@ -73,9 +73,9 @@ function v = get_velocity_profile(base, alphas, vehicle)
     % that is why we modify the track so that after the last point of the
     % track comes the first point, and start our algorithm from this last
     % point
-    v = [v,v(1)];
-    k = [k, k(1)];
-    ds = [ds, ds(1)];
+    v = [v;v(1)];
+    k = [k; k(1)];
+    ds = [ds; ds(1)];
     for I = length(v):-1:2
         if(v(I-1) < v(I))
             continue; %no breaking necessary 
@@ -89,9 +89,9 @@ function v = get_velocity_profile(base, alphas, vehicle)
     % unshift !!!!
     v = v(1:end-1); % remove the last element
     %we need to undo the following line:
-    %   v_model_based = [v_model_based(i_V_min:end), v_model_based(1:i_V_min-1)];
+    %   v_model_based = [v_model_based(i_V_min:end); v_model_based(1:i_V_min-1)];
     % reminder: len = length(v_speed_limit); 
-    v_unshift = [v(len - i_V_min + 2:end), v(1:len - i_V_min + 1)];
+    v_unshift = [v(len - i_V_min + 2:end); v(1:len - i_V_min + 1)];
     v = v_unshift; % value to be returned
     v_struct.v_backward = v;
 
