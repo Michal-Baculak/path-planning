@@ -1,11 +1,8 @@
 function k = get_curvature2(base, alphas)
-    pts = get_points(base, alphas);
-    sz = size(pts,1);
-    pts = [pts(end,:); pts; pts(1,:)];
-    k = 0;
-    for I = 2:sz+1
-        a = get_angle(pts(I-1,:), pts(I,:), pts(I+1,:));
-        d = distance(pts(I,:), pts(I+1,:));
-        k = k + (a/d)^2;
+    prof = get_curvature2_profile(base,alphas);
+    if(isnan(prof(1)))
+        k = sum(prof(2:end-1));
+        return;
     end
+    k = sum(prof);
 end
