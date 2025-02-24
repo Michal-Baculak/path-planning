@@ -9,14 +9,13 @@ function [base] = Parametrize(innerCones, outterCones, resolution)
     %% 1. Compute all distances between innerCones
     dist = [];
     base = [];
+    innerCones(end+1,:) = innerCones(1,:);
+    outterCones(end+1,:) = outterCones(1,:);
     for I = 1:(size(innerCones, 1)-1)
         dx = innerCones(I,1) - innerCones(I+1,1);
         dy = innerCones(I, 2) - innerCones(I+1,2);
         dist (I) = sqrt(dx^2 + dy^2);
     end
-    dx = innerCones(end, 1) - innerCones(1, 1);
-    dy = innerCones(end,2) - innerCones(1, 2);
-    dist(end+1) = sqrt(dx^2 + dy^2);
 
     %% 2. compute total length
     len = sum(dist);
@@ -38,7 +37,7 @@ function [base] = Parametrize(innerCones, outterCones, resolution)
         pos = pos - 1;
         %pos = index of last point
         s = s + dist(pos); %undo last subtraction to find remaining dist
-        k = innerCones(mod(pos, size(innerCones,1)) + 1, :) - innerCones(pos, :);
+        k = innerCones(pos + 1, :) - innerCones(pos, :);
         % point along innerCones
         p1 = innerCones(pos, :) + k*s/dist(pos) 
     %% 5. On each point construct a line perpendicular to local derivative, and
@@ -50,10 +49,6 @@ function [base] = Parametrize(innerCones, outterCones, resolution)
             if(out)
                 p_s = [p_s; p];
             end
-        end
-        [out p] = crossesBetween(outterCones(end,:), outterCones(1,:), p1, k_n);
-        if(out)
-            p_s = [p_s; p];
         end
         p2 = p_s(1,:);
         min_dist = distance(p1, p2);
