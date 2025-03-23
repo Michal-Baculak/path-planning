@@ -2,10 +2,11 @@
 load("vehicle_FS.mat");
 load("track1_fixed.mat");
 % [innerConePosition, outerConePosition] = square_round_track(100, 50, 4, 4, 2);
-base = Parametrize(innerConePosition, outerConePosition, 100);
+% base = Parametrize(innerConePosition, outerConePosition, 200);
+base = parametrize_gradual(innerConePosition,outerConePosition,2,1);
 base(end+1,:) = base(1,:);
 %base = parametrize_delaunay(innerConePosition,outerConePosition);
-%% plot bounds and checkpoints
+% plot bounds and checkpoints
 figure;
 plot_track(innerConePosition, outerConePosition);
 hold on
@@ -93,12 +94,12 @@ lap_time = sum(get_time_profile(base, sol9, vehicle))
 %% optimize based od k^2 and length weighted with gradient
 lb = zeros(size(base, 1)-1,1);
 ub = ones(size(base, 1)-1,1);
-x0 = ones(size(base, 1)-1,1);
+x0 = lb;
 options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', "MaxFunctionEvaluations",10e3, "StepTolerance",1e-20, "SpecifyObjectiveGradient",true);
 sol10 = fmincon(@(alphas) func_w(base, alphas,0.5),x0, [], [], [], [], lb, ub, [], options)
 plot_trajectory(base, sol10);
 lap_time = sum(get_time_profile(base, sol10, vehicle))
-
+func_w(base, sol10, 0.5)
 %% optimize first half based od k^2 and length weighted with gradient
 % In progress
 lb = zeros(size(base, 1),1);
@@ -112,9 +113,23 @@ sol11 = [sol11; x_pers];
 plot_trajectory(base, sol11);
 lap_time = sum(get_time_profile(base, sol11, vehicle))
 
+%% optimize based od l^2 with gradient
+lb = zeros(size(base, 1)-1,1);
+ub = ones(size(base, 1)-1,1);
+x0 = ones(size(base, 1)-1,1);
+options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', "MaxFunctionEvaluations",10e3, "StepTolerance",1e-20, "SpecifyObjectiveGradient",true);
+sol12 = fmincon(@(alphas) func_l2(base, alphas),x0, [], [], [], [], lb, ub, [], options)
+plot_trajectory(base, sol12);
+lap_time = sum(get_time_profile(base, sol12, vehicle))
+
 function [f, g] = func_l(base, alphas)
     f = get_length(base, alphas);
     g = grad_length(base, alphas);
+end
+
+function [f, g] = func_l2(base, alphas)
+    f = get_length2(base, alphas);
+    g = grad_l2(base, alphas);
 end
 
 function [f, g] = func_k(base, alphas)
