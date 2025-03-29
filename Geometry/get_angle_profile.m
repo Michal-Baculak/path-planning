@@ -1,6 +1,6 @@
 function out = get_angle_profile(base, alphas)
     pts = get_points(base, alphas);    
-    out = zeros(size(alphas));
+    out = zeros(length(alphas),1);
     % Closed track
     if(base(1,:) == base(end, :))
         pts = [pts(end,:); pts; pts(1,:)];
