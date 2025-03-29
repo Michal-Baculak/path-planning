@@ -2,7 +2,10 @@
 load("vehicle_FS.mat");
 load("track1_fixed.mat");
 % [innerConePosition, outerConePosition] = square_round_track(100, 50, 4, 4, 2);
-% base = Parametrize(innerConePosition, outerConePosition, 200);
+% base = Parametrize(innerConePosition, outerConePosition, 400);
+innerConePosition = flip(innerConePosition,1);
+outerConePosition = flip(outerConePosition, 1);
+[innerConePosition, outerConePosition] = safety_margin(innerConePosition, outerConePosition, 1);
 base = parametrize_gradual(innerConePosition,outerConePosition,2,1);
 base(end+1,:) = base(1,:);
 %base = parametrize_delaunay(innerConePosition,outerConePosition);
