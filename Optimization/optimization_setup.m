@@ -5,7 +5,7 @@ load("track1_fixed.mat");
 % base = Parametrize(innerConePosition, outerConePosition, 400);
 innerConePosition = flip(innerConePosition,1);
 outerConePosition = flip(outerConePosition, 1);
-[innerConePosition, outerConePosition] = safety_margin(innerConePosition, outerConePosition, 1);
+% [innerConePosition, outerConePosition] = safety_margin(innerConePosition, outerConePosition, 1);
 base = parametrize_gradual(innerConePosition,outerConePosition,2,1);
 base(end+1,:) = base(1,:);
 %base = parametrize_delaunay(innerConePosition,outerConePosition);
@@ -98,10 +98,11 @@ lap_time = sum(get_time_profile(base, sol9, vehicle))
 lb = zeros(size(base, 1)-1,1);
 ub = ones(size(base, 1)-1,1);
 x0 = lb;
+w = 0;
 options = optimoptions('fmincon','Display','iter','Algorithm','interior-point', "MaxFunctionEvaluations",10e3, "StepTolerance",1e-20, "SpecifyObjectiveGradient",true);
-sol10 = fmincon(@(alphas) func_w(base, alphas,0.5),x0, [], [], [], [], lb, ub, [], options)
+sol10 = fmincon(@(alphas) func_w(base, alphas,w),x0, [], [], [], [], lb, ub, [], options)
 plot_trajectory(base, sol10);
-lap_time = sum(get_time_profile(base, sol10, vehicle))
+% lap_time = sum(get_time_profile(base, sol10, vehicle))
 func_w(base, sol10, 0.5)
 %% optimize first half based od k^2 and length weighted with gradient
 % In progress

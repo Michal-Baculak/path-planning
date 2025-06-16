@@ -8,7 +8,7 @@ function [base] = parametrize_gradual(innerCones, outterCones, ds, is_closed)
 
     %% 1. calculate splines for origin and direction
     base = [];
-    outterCones(end+1,:) = outterCones(1,:);
+    % outterCones(end+1,:) = outterCones(1,:);
 
     t_orig =  [];
     origins_x = [];
@@ -19,6 +19,7 @@ function [base] = parametrize_gradual(innerCones, outterCones, ds, is_closed)
     dir_y = [];
     totalLength = 0;
     if(is_closed)
+        outterCones(end+1,:) = outterCones(1,:);
         t_orig = zeros(length(innerCones),1);
         origins_x = t_orig;
         origins_y = t_orig;

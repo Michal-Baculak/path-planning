@@ -38,7 +38,7 @@ function p = l_intersect(A1,A2,B1,B2)
     t_n = ((x1-x3)*(y3-y4) - (y1-y3)*(x3-x4));   
     t_d = ((x1-x2)*(y3-y4) - (y1-y2)*(x3-x4));
     if(t_d == 0)
-        %paralel or concident - we know from the use cases that it must be
+        %paralel or coincident - we know from the use cases that it must be
         %coincident, so we do a use case specific action: p = (a2+b1)/2
         p = (A2+B1)/2;
         return;
